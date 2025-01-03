@@ -1,0 +1,89 @@
+                            USEFUL COMMANDS
+
+				SETUP
+Getting logged in with ssh
+ip addr show
+whoami
+sudo cat /etc/ssh/sshd_config | grep Port
+sudo ufw status
+ssh localhost (test the setup)
+ssh lj@192.168.17.193
+
+				TESTING
+sudo systemctl enable <service>  (enable, start, restart the service to test)
+sudo systemctl status <service>
+journalctl -xe
+sudo lshw -C display
+sudo inxi -G
+xrandr
+echo $XDG_SESSION_TYPE
+free -h
+uname -r
+loginctl show-user lj
+
+				CREATION
+sudo mkdir /etc/                  (create a folder)
+sudo ls    /etc/                  (list files here)
+sudo cat   /etc/gdm/xorg.conf     (view file if exists)
+sudo touch /etc/                  (create an empty file)
+sudo nano  /etc/gdm/xorg.conf     (edit the file)
+
+                                INFO GATHERING Methods
+1. Append Output to a File. If the file doesn't exist, it will be created.:
+powershell
+inxi -G | Out-File -Append "C:\Users\ljfit\Desktop\linux\SSH\graphics_3.txt"
+
+2. Overwrite the File with New Output:
+powershell
+inxi -G | Out-File "C:\Users\ljfit\Desktop\linux\SSH\graphics_3.txt"
+
+3. SCP with OpenSSH
+scp lj@192.168.17.193:/home/lj/graphics_3.txt C:\Users\ljfit\Desktop\linux\SSH\graphics_3.txt
+
+scp lj@192.168.17.193:/home/lj/snapped.txt C:\Users\ljfit\Desktop\linux\SSH\im_gonna_snap.txt
+
+
+4. Redirect Output to file:
+ssh lj@192.168.17.193 "inxi -G" >> C:\Users\ljfit\Desktop\linux\SSH\graphics_3.txt
+
+ssh lj@192.168.17.193 'sudo journalctl | grep "error\|fail\|critical\|bug\|warn\|dependency\|unable"' >> C:\Users\ljfit\Desktop\linux\SSH\output.txt
+
+ssh lj@192.168.17.193 'echo charlie2401 | sudo -S journalctl | grep 'error\|fail\|critical\|bug\|warn\|dependency\|unable' " >> C:\Users\ljfit\Desktop\linux\SSH\output.txt 
+
+
+ssh lj@192.168.17.193 export $(dbus-launch) >> C:\Users\ljfit\Desktop\linux\SSH\dbus.txt
+
+
+
+5. Redirect Multiple Output to file:
+ssh lj@192.168.17.193 "inxi -G; free -h; uname -r" >> C:\Users\ljfit\Desktop\linux\SSH\graphics_3.txt
+
+6. Use a here document to send multiple commands
+ssh lj@192.168.17.193 << EOF >> C:\Users\ljfit\Desktop\linux\SSH\graphics_3.txt
+inxi -G
+free -h
+uname -r
+EOF
+
+7. Or create a script on the host machine and redirect the output:
+ssh lj@192.168.17.193 "/path/to/my_commands.sh" >> C:\Users\ljfit\Desktop\linux\SSH\graphics_3.txt
+
+8. Pipe a commands + output back to the host using tee, tty and temp file (doesn't work)
+ssh lj@192.168.17.193 "bash -i | tee -a /dev/tty | tee -a /tmp/terminal_output.log" >> C:/Users/ljfit/Desktop/linux/SSH/history.txt
+
+
+                                 NEW INSTALLS
+Weston
+				 FOLDERS CREATED
+/etc/x11/
+/etc/gdm/
+
+                                 FILES CREATED
+/etc/x11/xorg.file 
+/etc/gdm/custom.conf
+/etc/gdm/daemon.conf
+
+
+
+
+

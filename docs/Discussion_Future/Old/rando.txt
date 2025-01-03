@@ -1,0 +1,41 @@
+The key points about how these services will be added:
+
+Service Separation
+ssh_manager.sh handles interactive tasks
+sync_service.sh runs as a background daemon
+Each has its own process management
+Process Management
+Code
+CopyInsert
+# For sync_service.sh
+PID_FILE="/var/run/sync_service.pid"
+LOCK_FILE="/var/lock/sync_service.lock"
+Tracks service status
+Prevents multiple instances
+Handles cleanup on exit
+Integration with Existing Watcher
+Code
+CopyInsert
+# Your existing inotify watcher wrapped in service
+start_service() {
+    (
+        flock -n "$LOCK_FILE" || exit 1
+        inotifywait -m -r -e modify,create,delete,move ... |
+        while read -r directory events filename; do
+            process_changes "$directory" "$events" "$filename"
+        done
+    ) &
+    echo $! > "$PID_FILE"
+}
+Command Structure
+Code
+CopyInsert
+# Interactive commands (ssh_manager.sh)
+setup   → setup_ssh_keys; configure_ssh
+forward → setup_port_forwarding
+sync    → perform_manual_sync
+
+# Service commands (sync_service.sh)
+start   → start_service (runs watcher in background)
+stop    → stop_service (kills watcher process)
+status  → check_status (checks PID and locks)

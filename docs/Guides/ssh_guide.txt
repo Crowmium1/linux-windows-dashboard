@@ -1,0 +1,56 @@
+
+To SSH into your Linux computer, you need the following details:
+
+1. IP Address of the Linux Computer
+The IP address is how your Windows computer will find the Linux computer on the network.
+
+Command to find the IP address (run on the Linux computer, outside the chroot):
+ip addr show
+
+lo: inet 127:0.0.1/8 scope host lot
+wlp170s0: inet 192:168.17.193/24 brd 192.168.17.255 scope global dynamic nopfixroute
+
+Look for the section under inet for your active network interface (e.g., eth0 for Ethernet, wlan0 for Wi-Fi). It will look something like 192.168.1.100.
+
+2. SSH Username
+This is the username of the account you want to log into on the Linux computer.
+
+To find the username, run:
+whoami
+
+lj
+
+
+3. SSH Password (or Key)
+You need either:
+
+The password for the user account.
+
+charlie2401
+
+An SSH key if the Linux computer is set up for key-based authentication. If you're unsure, the password should work unless key-based authentication is enforced.
+
+4. SSH Port (Optional)
+The default SSH port is 22. If you or someone else changed it, you'll need to know the new port. To check the configured port:
+
+Look in the SSH configuration file on the Linux computer:
+sudo cat /etc/ssh/sshd_config | grep Port
+If you see Port 22, it's the default.
+
+5. Firewall Rules (If Enabled)
+Make sure the Linux firewall allows SSH connections:
+
+For ufw (Ubuntu’s Uncomplicated Firewall), run:
+sudo ufw status
+
+Look for a rule allowing OpenSSH.
+Verifying the Setup
+Test the SSH connection from the Linux computer itself:
+
+ssh localhost
+
+If this works, SSH is running correctly.
+Once you have the IP address, username, and (if applicable) password or key, you can use the Windows terminal or an SSH client like PuTTY to log in.
+
+Example using Windows command prompt or PowerShell:
+ssh username@192.168.1.100

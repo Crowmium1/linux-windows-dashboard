@@ -1,0 +1,36 @@
+# Core SSH Tools
+openssh-client    # Basic SSH client
+openssh-server    # SSH server (if running server side)
+sshpass          # Non-interactive ssh password provider
+ssh-copy-id      # Tool for copying SSH keys
+
+# File Synchronization
+rsync            # Fast file synchronization tool
+inotify-tools    # File system monitoring (optional, for real-time sync)
+
+# System Monitoring
+sysstat          # System performance tools (iostat, mpstat, etc.)
+bc               # Basic calculator (used for numeric comparisons)
+procps           # System and process monitoring
+net-tools        # Network utilities (netstat, etc.)
+
+# Filesystem Tools
+e2fsprogs        # Filesystem utilities (fsck, etc.)
+util-linux       # System utilities (mount, umount, etc.)
+
+# Compression Tools
+tar              # Tape archiving utility
+gzip            # GNU zip compression
+
+# Process Management
+psmisc           # Process management tools (pgrep, killall)
+lsof             # List open files
+
+# Network Tools
+iproute2         # IP routing utilities
+netcat           # Network utility for reading/writing network connections
+
+# For WSL/Windows Users
+# These are Windows-specific tools that might be needed:
+# - Windows OpenSSH (install via Windows Features)
+# - Git Bash (provides basic Unix tools on Windows)

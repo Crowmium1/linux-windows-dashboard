@@ -1,0 +1,2 @@
+Command: netstat -tuln (NOT AVAILABLE)
+Tool 'netstat' is not installed

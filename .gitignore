@@ -1,0 +1,16 @@
+# Main things to ignore
+*.log
+*.tmp
+*.pid
+.envrc
+.ssh
+.conf
+
+# Other things to ignore
+*.o
+*.out
+*.class
+/node_modules
+/dist
+/.vscode
+tmp/security/large_file.txt
