@@ -1,0 +1,60 @@
+# Alert configuration
+
+# Notification channels
+notification_channels:
+  email:
+    enabled: true
+    smtp_server: "smtp.example.com"
+    smtp_port: 587
+    smtp_user: ""
+    smtp_password: ""
+    from_address: "alerts@sshdashboard.local"
+    to_addresses: ["admin@example.com"]
+  
+  slack:
+    enabled: false
+    webhook_url: ""
+    channel: "#ssh-alerts"
+    username: "SSH Dashboard"
+
+# Alert thresholds
+thresholds:
+  connection:
+    latency_ms: 1000
+    failed_attempts: 5
+    timeout_sec: 30
+  
+  system:
+    cpu_percent: 80
+    memory_percent: 90
+    disk_percent: 85
+    
+  service:
+    restart_count: 3
+    downtime_sec: 300
+
+# Alert rules
+rules:
+  high_latency:
+    condition: "latency > thresholds.connection.latency_ms"
+    severity: "warning"
+    message: "High latency detected: {latency}ms"
+    channels: ["email"]
+    
+  connection_failed:
+    condition: "failed_attempts >= thresholds.connection.failed_attempts"
+    severity: "critical"
+    message: "Multiple connection failures detected"
+    channels: ["email", "slack"]
+    
+  service_down:
+    condition: "service_status == 'down'"
+    severity: "critical"
+    message: "Service {service_name} is down"
+    channels: ["email", "slack"]
+
+# Alert history
+history:
+  retention_days: 30
+  max_entries: 1000
+  log_file: "/var/log/ssh_dashboard/alerts.log"

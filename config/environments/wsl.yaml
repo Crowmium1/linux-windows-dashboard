@@ -1,0 +1,29 @@
+# WSL-specific configuration
+
+# System paths
+SYSTEM_ROOT: ''
+LOG_DIR: '/var/log/ssh_dashboard'
+DATA_DIR: '/var/lib/ssh_dashboard'
+TEMP_DIR: '/tmp/ssh_dashboard'
+
+# Windows interop paths
+WIN_SYSTEM_ROOT: '/mnt/c'
+WIN_LOG_DIR: '${WIN_SYSTEM_ROOT}/ProgramData/ssh_dashboard/logs'
+WIN_DATA_DIR: '${WIN_SYSTEM_ROOT}/ProgramData/ssh_dashboard/data'
+WIN_TEMP_DIR: '${WIN_SYSTEM_ROOT}/ProgramData/ssh_dashboard/temp'
+
+# Command paths
+SSH_CMD: '/usr/bin/ssh'
+SSH_KEYGEN: '/usr/bin/ssh-keygen'
+PS_CMD: '/bin/ps'
+WIN_PS_CMD: '${WIN_SYSTEM_ROOT}/Windows/System32/WindowsPowerShell/v1.0/powershell.exe'
+
+# WSL-specific settings
+USE_POWERSHELL: false
+NEWLINE: '\n'
+PATH_SEPARATOR: '/'
+WIN_PATH_SEPARATOR: '\\'
+
+# Process management
+PROCESS_CHECK_CMD: 'ps aux'
+KILL_CMD: 'kill -9'

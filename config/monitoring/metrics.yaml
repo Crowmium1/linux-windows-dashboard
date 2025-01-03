@@ -1,0 +1,69 @@
+# Metrics configuration
+
+# Collection settings
+collection:
+  interval_sec: 60
+  batch_size: 100
+  retention_days: 90
+
+# Metrics to collect
+metrics:
+  connection:
+    enabled: true
+    measurements:
+      - latency
+      - packet_loss
+      - bandwidth
+      - active_connections
+      - failed_attempts
+    
+  system:
+    enabled: true
+    measurements:
+      - cpu_usage
+      - memory_usage
+      - disk_usage
+      - network_io
+      - process_count
+    
+  service:
+    enabled: true
+    measurements:
+      - status
+      - uptime
+      - restart_count
+      - resource_usage
+
+# Storage settings
+storage:
+  type: "file"  # Options: file, sqlite, prometheus
+  file:
+    path: "/var/log/ssh_dashboard/metrics"
+    format: "csv"  # Options: csv, json
+    max_size_mb: 100
+    rotate_count: 5
+  
+  sqlite:
+    enabled: false
+    path: "/var/lib/ssh_dashboard/metrics.db"
+    vacuum_days: 30
+    
+  prometheus:
+    enabled: false
+    push_gateway: "http://localhost:9091"
+    job_name: "ssh_dashboard"
+
+# Export settings
+export:
+  formats:
+    - json
+    - csv
+    - prometheus
+  
+  schedule:
+    enabled: true
+    interval_hours: 24
+    retention_count: 30
+    
+  destination:
+    path: "/var/lib/ssh_dashboard/exports"

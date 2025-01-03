@@ -1,0 +1,21 @@
+# Linux-specific configuration
+
+# System paths
+SYSTEM_ROOT: ''
+LOG_DIR: '/var/log/ssh_dashboard'
+DATA_DIR: '/var/lib/ssh_dashboard'
+TEMP_DIR: '/tmp/ssh_dashboard'
+
+# Command paths
+SSH_CMD: '/usr/bin/ssh'
+SSH_KEYGEN: '/usr/bin/ssh-keygen'
+PS_CMD: '/bin/ps'
+
+# Linux-specific settings
+USE_POWERSHELL: false
+NEWLINE: '\n'
+PATH_SEPARATOR: '/'
+
+# Process management
+PROCESS_CHECK_CMD: 'ps aux'
+KILL_CMD: 'kill -9'

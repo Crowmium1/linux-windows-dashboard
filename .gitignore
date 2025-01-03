@@ -2,9 +2,10 @@
 *.log
 *.tmp
 *.pid
-.envrc
+# .envrc
 .ssh
 .conf
+* text=auto
 
 # Other things to ignore
 *.o

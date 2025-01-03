@@ -1,0 +1,21 @@
+# Windows-specific configuration
+
+# System paths
+SYSTEM_ROOT: 'C:'
+LOG_DIR: '${SYSTEM_ROOT}/ProgramData/ssh_dashboard/logs'
+DATA_DIR: '${SYSTEM_ROOT}/ProgramData/ssh_dashboard/data'
+TEMP_DIR: '${SYSTEM_ROOT}/ProgramData/ssh_dashboard/temp'
+
+# Command paths
+SSH_CMD: 'C:/Windows/System32/OpenSSH/ssh.exe'
+SSH_KEYGEN: 'C:/Windows/System32/OpenSSH/ssh-keygen.exe'
+PS_CMD: 'powershell.exe'
+
+# Windows-specific settings
+USE_POWERSHELL: true
+NEWLINE: '\r\n'
+PATH_SEPARATOR: '\\'
+
+# Process management
+PROCESS_CHECK_CMD: 'tasklist'
+KILL_CMD: 'taskkill /F /PID'

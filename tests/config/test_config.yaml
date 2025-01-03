@@ -1,0 +1,81 @@
+# Test configuration
+
+# Test environment
+environment:
+  type: "test"
+  mock_external_services: true
+  cleanup_after_tests: true
+
+# Test data
+test_data:
+  hosts:
+    - hostname: "test-host-1"
+      port: 22
+      user: "test-user"
+      key_file: "test_keys/test-host-1.key"
+    - hostname: "test-host-2"
+      port: 2222
+      user: "test-user"
+      key_file: "test_keys/test-host-2.key"
+
+# Mock responses
+mock_responses:
+  ssh:
+    connection:
+      success:
+        status: 0
+        output: "Connected successfully"
+      failure:
+        status: 1
+        output: "Connection failed"
+    command:
+      success:
+        status: 0
+        output: "Command executed successfully"
+      failure:
+        status: 1
+        output: "Command failed"
+
+# Test timeouts
+timeouts:
+  connection: 5
+  command: 10
+  service: 15
+
+# Test thresholds
+thresholds:
+  cpu_usage: 80
+  memory_usage: 90
+  disk_usage: 85
+  connection_attempts: 3
+
+# Test notifications
+notifications:
+  email:
+    enabled: false
+    smtp_server: "mock-smtp.test"
+    to_address: "test@example.com"
+  slack:
+    enabled: false
+    webhook_url: "https://mock-slack.test/webhook"
+
+# Test logging
+logging:
+  level: "DEBUG"
+  file: "test.log"
+  format: "[%{timestamp}] [%{level}] %{message}"
+
+# Test metrics
+metrics:
+  collection:
+    interval: 1
+    batch_size: 10
+  storage:
+    type: "memory"
+    max_size: 1000
+
+# Test cleanup
+cleanup:
+  remove_test_files: true
+  remove_test_data: true
+  remove_logs: true

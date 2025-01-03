@@ -1,0 +1,7 @@
+{
+    "hostname": "alert-host",
+    "status": "running",
+    "cpu": 95,
+    "memory": 92,
+    "disk": 98
+}

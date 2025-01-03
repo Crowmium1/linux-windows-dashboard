@@ -305,3 +305,165 @@ cleanup_old_files() {
     
     return 0
 }
+
+# Function to handle logging with rotation
+log_message() {
+    local level=$1
+    local message=$2
+    local log_file=$3
+    local max_size=${4:-${LOG_MAX_SIZE:-10485760}}  # Default 10MB
+    local timestamp
+    timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    
+    # Create log directory if it doesn't exist
+    local log_dir
+    log_dir=$(dirname "$log_file")
+    mkdir -p "$log_dir"
+    
+    # Rotate log if needed
+    if [ -f "$log_file" ] && [ "$(stat -f%z "$log_file" 2>/dev/null || stat -c%s "$log_file")" -gt "$max_size" ]; then
+        mv "$log_file" "${log_file}.1"
+        # Keep only last 5 rotated logs
+        for i in $(seq 5 -1 1); do
+            if [ -f "${log_file}.$i" ]; then
+                mv "${log_file}.$i" "${log_file}.$((i+1))"
+            fi
+        done
+    fi
+    
+    # Format the message based on level
+    case "$level" in
+        INFO)
+            echo -e "${timestamp} [${GREEN}INFO${NC}] $message" | tee -a "$log_file"
+            ;;
+        WARNING)
+            echo -e "${timestamp} [${YELLOW}WARNING${NC}] $message" | tee -a "$log_file"
+            ;;
+        ERROR)
+            echo -e "${timestamp} [${RED}ERROR${NC}] $message" | tee -a "$log_file"
+            ;;
+        *)
+            echo -e "${timestamp} [${level}] $message" | tee -a "$log_file"
+            ;;
+    esac
+}
+
+# Wrapper functions for different log levels
+log_info() {
+    local message=$1
+    local log_file=${2:-"${HA_LOG_DIR}/ha.log"}
+    log_message "INFO" "$message" "$log_file"
+}
+
+log_warning() {
+    local message=$1
+    local log_file=${2:-"${HA_LOG_DIR}/ha.log"}
+    log_message "WARNING" "$message" "$log_file"
+}
+
+log_error() {
+    local message=$1
+    local log_file=${2:-"${HA_LOG_DIR}/ha.log"}
+    log_message "ERROR" "$message" "$log_file"
+}
+
+# Function to send notifications
+send_notification() {
+    local type=$1
+    local message=$2
+    local config=$3
+    
+    case "$type" in
+        email)
+            if [[ -n "${NOTIFY_EMAIL}" ]]; then
+                echo "$message" | mail -s "SSH Dashboard Alert" "${NOTIFY_EMAIL}"
+            fi
+            ;;
+        slack)
+            if [[ -n "${NOTIFY_SLACK_WEBHOOK}" ]]; then
+                curl -X POST -H 'Content-type: application/json' \
+                    --data "{\"text\":\"${message}\"}" \
+                    "${NOTIFY_SLACK_WEBHOOK}"
+            fi
+            ;;
+        *)
+            log_warning "Unknown notification type: $type"
+            return 1
+            ;;
+    esac
+}
+
+# Function to parse YAML configuration
+parse_yaml() {
+    local yaml_file=$1
+    local prefix=$2
+    
+    # Using sed to parse YAML file
+    local s
+    s='[[:space:]]*'
+    local w
+    w='[a-zA-Z0-9_]*'
+    local fs
+    fs=$(echo @|tr @ '\034')
+    
+    sed -ne "s|^\($s\):|\1|" \
+        -e "s|^\($s\)\($w\)$s:$s[\"']\(.*\)[\"']$s\$|\1$fs\2$fs\3|p" \
+        -e "s|^\($s\)\($w\)$s:$s\(.*\)$s\$|\1$fs\2$fs\3|p" "$yaml_file" |
+    awk -F"$fs" '{
+        indent = length($1)/2;
+        vname[indent] = $2;
+        for (i in vname) {if (i > indent) {delete vname[i]}}
+        if (length($3) > 0) {
+            vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("_")}
+            printf("%s%s%s=\"%s\"\n", "'$prefix'",vn,$2,$3);
+        }
+    }'
+}
+
+# Function to validate SSH key permissions
+validate_ssh_key() {
+    local key_path=$1
+    local expected_perms=${2:-600}
+    
+    if [[ ! -f "${key_path}" ]]; then
+        log_error "SSH key not found: ${key_path}"
+        return 1
+    fi
+    
+    local actual_perms
+    actual_perms=$(stat -c "%a" "${key_path}")
+    
+    if [[ "${actual_perms}" != "${expected_perms}" ]]; then
+        log_error "Invalid permissions on ${key_path}: ${actual_perms} (expected ${expected_perms})"
+        return 1
+    fi
+    
+    return 0
+}
+
+# Function to check if a port is open
+check_port() {
+    local host=$1
+    local port=$2
+    local timeout=${3:-5}
+    
+    if command -v nc >/dev/null 2>&1; then
+        nc -z -w "$timeout" "$host" "$port" >/dev/null 2>&1
+    else
+        timeout "$timeout" bash -c "echo >/dev/tcp/$host/$port" >/dev/null 2>&1
+    fi
+}
+
+# Function to get process status
+get_process_status() {
+    local process=$1
+    local pid
+    
+    if pid=$(pgrep -f "$process"); then
+        echo "running ($pid)"
+        return 0
+    else
+        echo "stopped"
+        return 1
+    fi
+}

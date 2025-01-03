@@ -1,0 +1,166 @@
+# Example Security Configuration
+
+# SSH Configuration
+ssh:
+  port: 22
+  protocol: 2
+  permit_root_login: "no"
+  password_authentication: "no"
+  pubkey_authentication: "yes"
+  max_auth_tries: 3
+  client_alive_interval: 300
+  client_alive_count_max: 3
+  x11_forwarding: "no"
+  allow_agent_forwarding: "no"
+  allow_tcp_forwarding: "no"
+  print_motd: "no"
+  use_dns: "no"
+
+  # Allowed Users/Groups
+  allow_users:
+    - "admin"
+    - "monitor"
+  allow_groups:
+    - "ssh-users"
+    - "ssh-admin"
+
+  # Key Configuration
+  authorized_keys_file: ".ssh/authorized_keys"
+  host_key_algorithms:
+    - "ssh-ed25519"
+    - "rsa-sha2-512"
+    - "rsa-sha2-256"
+  key_types:
+    - type: "ed25519"
+      min_size: 256
+    - type: "rsa"
+      min_size: 3072
+
+# Authentication
+authentication:
+  method: "key"  # key, password, or both
+  two_factor:
+    enabled: true
+    type: "google"  # google, yubikey
+    issuer: "SSH Dashboard"
+    timeout: 30
+
+  # Password Policy
+  password_policy:
+    min_length: 12
+    require_uppercase: true
+    require_lowercase: true
+    require_numbers: true
+    require_special: true
+    max_age: 90
+    history: 5
+
+  # Key Policy
+  key_policy:
+    rotation: 90  # days
+    min_size:
+      rsa: 3072
+      ed25519: 256
+    allowed_types:
+      - "ed25519"
+      - "rsa"
+
+# Access Control
+access_control:
+  # IP Restrictions
+  ip_whitelist:
+    - "192.168.1.0/24"
+    - "10.0.0.0/8"
+  ip_blacklist:
+    - "1.2.3.4"
+
+  # Time Restrictions
+  time_restrictions:
+    enabled: true
+    allowed_times:
+      - days: ["Mon", "Tue", "Wed", "Thu", "Fri"]
+        start: "09:00"
+        end: "17:00"
+
+  # Role-Based Access
+  roles:
+    admin:
+      permissions:
+        - "system:*"
+        - "service:*"
+        - "security:*"
+    operator:
+      permissions:
+        - "system:read"
+        - "service:read"
+        - "service:restart"
+    viewer:
+      permissions:
+        - "system:read"
+        - "service:read"
+
+# Encryption
+encryption:
+  # Data at Rest
+  data_encryption:
+    enabled: true
+    algorithm: "aes-256-gcm"
+    key_file: "/etc/ssh_dashboard/encryption_key"
+
+  # Data in Transit
+  ssl:
+    enabled: true
+    protocols:
+      - "TLSv1.2"
+      - "TLSv1.3"
+    ciphers:
+      - "ECDHE-ECDSA-AES256-GCM-SHA384"
+      - "ECDHE-RSA-AES256-GCM-SHA384"
+    cert_file: "/etc/ssl/certs/dashboard.crt"
+    key_file: "/etc/ssl/private/dashboard.key"
+
+# Auditing
+auditing:
+  enabled: true
+  log_file: "${HA_LOG_DIR}/audit.log"
+  events:
+    - "authentication"
+    - "authorization"
+    - "configuration_change"
+    - "key_management"
+  retention: 90  # days
+
+# Intrusion Detection
+intrusion_detection:
+  enabled: true
+  max_failed_attempts: 5
+  block_time: 3600  # seconds
+  notification_threshold: 3
+  watch_files:
+    - "/etc/ssh/sshd_config"
+    - "/etc/ssh_dashboard/config"
+    - "${HA_CONFIG_DIR}"
+
+# Compliance
+compliance:
+  standards:
+    - name: "PCI-DSS"
+      version: "3.2.1"
+      requirements:
+        - "8.2"
+        - "8.3"
+    - name: "HIPAA"
+      requirements:
+        - "164.312(a)(1)"
+        - "164.312(d)"
+
+# Backup
+security_backup:
+  enabled: true
+  interval: 86400  # daily
+  encryption: true
+  locations:
+    - path: "/backup/security"
+      type: "local"
+    - path: "s3://backup/security"
+      type: "s3"

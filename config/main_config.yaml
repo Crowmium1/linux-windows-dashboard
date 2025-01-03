@@ -1,0 +1,24 @@
+# Main configuration
+
+# Import environment-specific settings
+import:
+  - environments/${ENV}.yaml
+
+# Common settings (override environment defaults if needed)
+MONITOR_INTERVAL: 60
+CPU_THRESHOLD: 80
+MEMORY_THRESHOLD: 90
+DISK_THRESHOLD: 85
+TEMP_THRESHOLD: 70
+
+# SSH settings
+SSH_PORT: 22
+SSH_KEY_TYPE: 'rsa'
+SSH_KEY_BITS: 4096
+MAX_RETRIES: 3
+RETRY_DELAY: 5
+
+# Security settings
+SESSION_TIMEOUT: 3600
+MAX_LOGIN_ATTEMPTS: 3
+KEY_EXPIRY_DAYS: 90

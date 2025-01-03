@@ -1,0 +1,59 @@
+# Web Interface Configuration
+
+# Server Settings
+server:
+  port: 3000
+  host: "localhost"
+  cors:
+    enabled: true
+    origins: ["http://localhost:3000"]
+
+# Security Settings
+security:
+  session:
+    secret: "change-this-in-production"
+    duration: 86400  # 24 hours in seconds
+  csrf:
+    enabled: true
+  rateLimit:
+    enabled: true
+    windowMs: 900000  # 15 minutes
+    max: 100  # requests per windowMs
+
+# API Settings
+api:
+  version: "v1"
+  prefix: "/api"
+  timeout: 30000  # 30 seconds
+  rateLimit:
+    enabled: true
+    windowMs: 900000  # 15 minutes
+    max: 1000  # requests per windowMs
+
+# UI Settings
+ui:
+  theme: "light"
+  refreshInterval: 30000  # 30 seconds
+  charts:
+    resourceHistory: 3600  # 1 hour in seconds
+    maxDataPoints: 120
+  notifications:
+    maxDisplay: 100
+    refreshInterval: 60000  # 1 minute
+
+# Logging Settings
+logging:
+  level: "info"
+  format: "combined"
+  directory: "${HA_LOG_DIR}/web"
+  maxSize: 10485760  # 10MB
+  maxFiles: 5
+  
+# Service Integration
+services:
+  ha:
+    checkInterval: 30000  # 30 seconds
+  monitoring:
+    dataRetention: 604800  # 7 days in seconds
+  security:
+    sessionTimeout: 3600  # 1 hour in seconds

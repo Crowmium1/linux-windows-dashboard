@@ -1,0 +1,56 @@
+# High Availability Configuration
+
+# Primary and backup hosts
+hosts:
+  primary:
+    hostname: "primary.example.com"
+    port: 22
+    check_interval: 30  # seconds
+    max_failures: 3
+    
+  backup:
+    - hostname: "backup1.example.com"
+      port: 22
+      priority: 1
+    - hostname: "backup2.example.com"
+      port: 22
+      priority: 2
+
+# Failover settings
+failover:
+  auto_failover: true
+  failback_delay: 300  # seconds
+  max_failover_attempts: 3
+  require_manual_failback: false
+
+# State synchronization
+sync:
+  interval: 60  # seconds
+  paths:
+    - "/etc/ssh"
+    - "/var/log/ssh"
+  exclude:
+    - "*.tmp"
+    - "*.bak"
+  
+# Health checks
+health_check:
+  connection:
+    timeout: 5
+    retries: 3
+  
+  services:
+    - name: "sshd"
+      required: true
+    - name: "ssh-agent"
+      required: false
+
+# Notification settings
+notifications:
+  enabled: true
+  channels:
+    - type: "email"
+      recipients: ["admin@example.com"]
+    - type: "slack"
+      webhook: ""
+      channel: "#ssh-alerts"

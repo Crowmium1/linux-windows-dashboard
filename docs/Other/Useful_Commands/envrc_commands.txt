@@ -1,0 +1,71 @@
+# Direnv hook for bash
+eval "$(direnv hook bash)"
+
+# Add direnv executable to PATH (adjust the path if needed)
+export PATH=$PATH:/c/Users/ljfit/AppData/Local/Microsoft/WinGet/Packages/direnv.direnv_Microsoft.Winget.Source_8wekyb3d8bbwe
+
+source ~/.bashrc
+direnv status
+
+direnv --debug reload
+echo $SSH_USER
+echo $SSH_HOST
+echo $SSH_PORT
+
+ssh -i $SSH_PRIVATE_KEY_PATH $SSH_USER@$SSH_HOST -p $SSH_PORT
+
+source ~/.bashrc
+direnv allow
+direnv reload
+echo $SSH_USER
+
+Add your environment variables: You can add the same SSH-related environment 
+variables to the global .envrc as you did before, and they will be applied 
+whenever you're in a directory with a .envrc file, or in any child directories. 
+
+The most flexible and common way to store environment variables globally for
+direnv is to create a global .envrc file in your home directory 
+(~/.envrc or ~/.config/direnv/global.envrc) and source it in your individual
+project .envrc files as needed. This approach keeps the configurations modular,
+avoids conflicts, and is easy to maintain across different projects.
+
+mkdir -p ~/.config/direnv
+touch ~/.config/direnv/global.envrc~/.config/direnv/global.envrc
+ls -la .envrc
+
+Summary of Key Commands
+Enable direnv:
+Add eval "$(direnv hook bash)" to your shell's configuration file (e.g., .bashrc, .bash_profile).
+
+Disable direnv temporarily:
+direnv deactivate
+
+Block or Allow .envrc:
+direnv allow (to approve a blocked .envrc)
+direnv deny (to block an allowed .envrc)
+
+Reload environment variables:
+direnv reload
+
+Check environment variables:
+echo $VAR_NAME
+
+Unhook direnv:
+direnv deactivate
+
+Remove the eval "$(direnv hook bash)" command from the current shell session (just for the active session):
+unset -f direnv
+
+# If .profile exists, source it
+test -f ~/.profile && . ~/.profile
+
+# If .bashrc exists, source it
+test -f ~/.bashrc && . ~/.bashrc
+
+Get-ChildItem -Path C:\ -Recurse -Filter ".bashrc" -ErrorAction SilentlyContinue
+Get-ChildItem -Path C:\ -Recurse -Filter ".bash_profile" -ErrorAction SilentlyContinue
+Get-ChildItem -Path C:\ -Recurse -Filter ".envrc" -ErrorAction SilentlyContinue
+
+Get-ChildItem -Path C:\Users\ljfit -Recurse -Filter ".bashrc" -ErrorAction SilentlyContinue
+Get-ChildItem -Path C:\Users\ljfit -Recurse -Filter ".bash_profile" -ErrorAction SilentlyContinue
+

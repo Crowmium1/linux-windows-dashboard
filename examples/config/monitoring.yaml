@@ -1,0 +1,183 @@
+# Example Monitoring Configuration
+
+# General Settings
+monitoring:
+  enabled: true
+  interval: 60  # seconds
+  retention: 604800  # 7 days
+
+# Resource Monitoring
+resources:
+  cpu:
+    enabled: true
+    interval: 60
+    thresholds:
+      warning: 80
+      critical: 90
+    metrics:
+      - usage
+      - load_1m
+      - load_5m
+      - load_15m
+
+  memory:
+    enabled: true
+    interval: 60
+    thresholds:
+      warning: 80
+      critical: 90
+    metrics:
+      - used
+      - free
+      - cached
+      - buffers
+
+  disk:
+    enabled: true
+    interval: 300
+    thresholds:
+      warning: 80
+      critical: 90
+    paths:
+      - "/"
+      - "/var"
+      - "/opt"
+    metrics:
+      - used
+      - free
+      - inodes
+
+  network:
+    enabled: true
+    interval: 60
+    interfaces:
+      - eth0
+      - eth1
+    metrics:
+      - bytes_sent
+      - bytes_recv
+      - packets_sent
+      - packets_recv
+      - errors
+
+# Service Monitoring
+services:
+  ssh:
+    enabled: true
+    interval: 30
+    checks:
+      - type: "tcp"
+        port: 22
+      - type: "process"
+        name: "sshd"
+      - type: "log"
+        path: "/var/log/auth.log"
+        patterns:
+          - "Failed password"
+          - "Invalid user"
+
+  dashboard:
+    enabled: true
+    interval: 30
+    checks:
+      - type: "http"
+        url: "http://localhost:3000/health"
+        timeout: 5
+      - type: "process"
+        name: "node"
+      - type: "port"
+        number: 3000
+
+# Log Monitoring
+logs:
+  enabled: true
+  paths:
+    - path: "/var/log/auth.log"
+      type: "auth"
+    - path: "/var/log/syslog"
+      type: "system"
+    - path: "${HA_LOG_DIR}/*.log"
+      type: "application"
+  patterns:
+    - name: "ssh_failure"
+      pattern: "Failed password"
+      level: "warning"
+    - name: "ssh_invalid"
+      pattern: "Invalid user"
+      level: "warning"
+    - name: "service_error"
+      pattern: "ERROR"
+      level: "error"
+
+# Metrics Collection
+metrics:
+  prometheus:
+    enabled: true
+    port: 9100
+    path: "/metrics"
+    labels:
+      environment: "production"
+      service: "ssh-dashboard"
+
+  graphite:
+    enabled: false
+    host: "graphite.example.com"
+    port: 2003
+    prefix: "ssh.dashboard"
+
+# Alerting
+alerts:
+  enabled: true
+  handlers:
+    email:
+      enabled: true
+      smtp:
+        host: "smtp.example.com"
+        port: 587
+        user: "alerts@example.com"
+        password: "password"
+      recipients:
+        - "admin@example.com"
+
+    slack:
+      enabled: true
+      webhook: "https://hooks.slack.com/services/xxx/yyy/zzz"
+      channel: "#alerts"
+
+  rules:
+    - name: "high_cpu"
+      condition: "cpu.usage > 90"
+      duration: "5m"
+      severity: "critical"
+      handlers: ["email", "slack"]
+
+    - name: "disk_space"
+      condition: "disk.used > 90"
+      duration: "15m"
+      severity: "warning"
+      handlers: ["email"]
+
+    - name: "service_down"
+      condition: "service.status == 'down'"
+      duration: "1m"
+      severity: "critical"
+      handlers: ["email", "slack"]
+
+# Visualization
+visualization:
+  grafana:
+    enabled: true
+    url: "http://grafana:3000"
+    datasource: "prometheus"
+    dashboard_uid: "ssh-dashboard"
+
+# Storage
+storage:
+  type: "influxdb"
+  retention: "30d"
+  influxdb:
+    url: "http://localhost:8086"
+    database: "ssh_dashboard"
+    username: "admin"
+    password: "password"
+    retention_policy: "30d"

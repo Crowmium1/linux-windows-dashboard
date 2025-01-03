@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSH Dashboard Monitor</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard">
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fas fa-terminal"></i>
+                <span>SSH Dashboard</span>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-page="overview">
+                    <i class="fas fa-home"></i>
+                    <span>Overview</span>
+                </li>
+                <li data-page="services">
+                    <i class="fas fa-server"></i>
+                    <span>Services</span>
+                </li>
+                <li data-page="monitoring">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Monitoring</span>
+                </li>
+                <li data-page="security">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Security</span>
+                </li>
+                <li data-page="logs">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Logs</span>
+                </li>
+                <li data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </li>
+            </ul>
+        </nav>
+        
+        <main class="content">
+            <header>
+                <div class="header-left">
+                    <h1 id="page-title">Overview</h1>
+                </div>
+                <div class="header-right">
+                    <div class="status-indicator">
+                        <span class="status-dot"></span>
+                        <span class="status-text">System Status</span>
+                    </div>
+                    <div class="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">0</span>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="page-content">
+                <!-- Overview Page -->
+                <div id="overview" class="page active">
+                    <div class="grid-container">
+                        <div class="card system-status">
+                            <h3>System Status</h3>
+                            <div class="status-grid">
+                                <div class="status-item">
+                                    <i class="fas fa-server"></i>
+                                    <span>Services</span>
+                                    <strong id="services-status">Loading...</strong>
+                                </div>
+                                <div class="status-item">
+                                    <i class="fas fa-sync"></i>
+                                    <span>HA Status</span>
+                                    <strong id="ha-status">Loading...</strong>
+                                </div>
+                                <div class="status-item">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>Security</span>
+                                    <strong id="security-status">Loading...</strong>
+                                </div>
+                                <div class="status-item">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>Monitoring</span>
+                                    <strong id="monitoring-status">Loading...</strong>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card resource-usage">
+                            <h3>Resource Usage</h3>
+                            <div class="chart-container">
+                                <canvas id="resource-chart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="card recent-events">
+                            <h3>Recent Events</h3>
+                            <div class="events-list" id="events-list">
+                                <div class="loading">Loading events...</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card quick-actions">
+                            <h3>Quick Actions</h3>
+                            <div class="actions-grid">
+                                <button class="action-btn" data-action="restart-services">
+                                    <i class="fas fa-sync"></i>
+                                    Restart Services
+                                </button>
+                                <button class="action-btn" data-action="check-health">
+                                    <i class="fas fa-heart"></i>
+                                    Health Check
+                                </button>
+                                <button class="action-btn" data-action="view-logs">
+                                    <i class="fas fa-file-alt"></i>
+                                    View Logs
+                                </button>
+                                <button class="action-btn" data-action="backup">
+                                    <i class="fas fa-save"></i>
+                                    Backup
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Other pages will be loaded dynamically -->
+                <div id="services" class="page"></div>
+                <div id="monitoring" class="page"></div>
+                <div id="security" class="page"></div>
+                <div id="logs" class="page"></div>
+                <div id="settings" class="page"></div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Notification Modal -->
+    <div id="notification-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Notifications</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="notifications-list"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/charts.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+# Remote SSH Configuration
+Host ubuntu-remote
+    HostName 192.168.251.83
+    User lj
+    LocalForward 2222 localhost:22
+    IdentityFile ~/.ssh/id_ed25519
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    Port 22
+
+# GitHub SSH Configuration
+Host github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519
+  Port 22
+  ServerAliveInterval 60
+  ServerAliveCountMax 3

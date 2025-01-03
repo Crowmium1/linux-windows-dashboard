@@ -1,0 +1,68 @@
+# Security Configuration
+
+# SSH Key Settings
+ssh_keys:
+  private_key:
+    path: "~/.ssh/id_rsa"
+    permissions: 600
+    max_age: 90  # days
+  
+  public_key:
+    path: "~/.ssh/id_rsa.pub"
+    permissions: 644
+
+# SSH Configuration
+ssh:
+  permit_root_login: false
+  password_authentication: false
+  protocol_version: 2
+  x11_forwarding: false
+  max_auth_tries: 3
+  connection_timeout: 60
+  client_alive_interval: 300
+
+# Authentication Settings
+authentication:
+  max_failures: 5
+  failure_window: 3600  # seconds
+  lockout_duration: 1800  # seconds
+  allowed_users:
+    - "admin"
+    - "backup"
+    - "monitor"
+
+# Firewall Settings
+firewall:
+  enabled: true
+  default_policy: "deny"
+  allowed_ports:
+    - port: 22
+      protocol: "tcp"
+      source: "trusted_networks"
+    - port: 80
+      protocol: "tcp"
+      source: "any"
+    - port: 443
+      protocol: "tcp"
+      source: "any"
+
+# Trusted Networks
+networks:
+  trusted_networks:
+    - "192.168.1.0/24"
+    - "10.0.0.0/8"
+    - "172.16.0.0/12"
+
+# Security Monitoring
+monitoring:
+  check_interval: 300  # seconds
+  alert_threshold: 3
+  scan_ports: true
+  check_updates: true
+  
+# Logging Settings
+logging:
+  level: "info"
+  max_size: 10485760  # 10MB
+  max_files: 5
+  secure_logs: true

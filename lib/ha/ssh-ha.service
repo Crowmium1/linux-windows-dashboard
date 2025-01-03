@@ -1,0 +1,13 @@
+[Unit]
+Description=SSH High Availability Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /opt/ssh_dashboard/lib/ha/failover_manager.sh monitor
+ExecStartPre=/bin/bash -c 'mkdir -p /var/log/ssh_dashboard'
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

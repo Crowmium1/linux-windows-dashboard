@@ -1,0 +1,7 @@
+{
+    "hostname": "test-host",
+    "status": "running",
+    "cpu": 75,
+    "memory": 80,
+    "disk": 85
+}

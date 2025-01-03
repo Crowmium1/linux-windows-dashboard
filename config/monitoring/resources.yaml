@@ -1,0 +1,66 @@
+# Resource tracking configuration
+
+# Resource limits
+limits:
+  process:
+    max_cpu_percent: 80
+    max_memory_mb: 1024
+    max_file_handles: 1000
+    max_threads: 50
+    
+  connection:
+    max_concurrent: 100
+    max_per_host: 10
+    max_bandwidth_mbps: 100
+    
+  storage:
+    max_log_size_mb: 1000
+    max_metrics_size_mb: 5000
+    max_temp_size_mb: 500
+
+# Resource monitoring
+monitoring:
+  interval_sec: 30
+  averaged_over: 5  # number of samples to average
+  
+  triggers:
+    cpu_high:
+      threshold: 80
+      duration_sec: 300
+      action: "alert"
+    
+    memory_high:
+      threshold: 90
+      duration_sec: 300
+      action: "alert"
+    
+    disk_full:
+      threshold: 85
+      duration_sec: 60
+      action: "cleanup"
+
+# Cleanup policies
+cleanup:
+  logs:
+    max_age_days: 30
+    min_free_space_mb: 1000
+    
+  metrics:
+    max_age_days: 90
+    min_free_space_mb: 5000
+    
+  temp:
+    max_age_hours: 24
+    min_free_space_mb: 500
+
+# Resource allocation
+allocation:
+  connection_pool:
+    min_size: 5
+    max_size: 50
+    increment: 5
+    
+  worker_threads:
+    min_count: 2
+    max_count: 10
+    scale_factor: 1.5

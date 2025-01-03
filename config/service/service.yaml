@@ -1,0 +1,73 @@
+# Service Configuration
+
+# Service Dependencies
+dependencies:
+  commands:
+    - ssh
+    - rsync
+    - systemctl
+    - nc
+  services:
+    - sshd
+    - network.service
+
+# Service Settings
+services:
+  ssh-ha:
+    name: "SSH High Availability Service"
+    description: "Manages SSH high availability and failover"
+    type: "systemd"
+    exec_start: "/usr/local/bin/ssh-ha start"
+    exec_stop: "/usr/local/bin/ssh-ha stop"
+    restart: "always"
+    restart_sec: 30
+    
+  ssh-monitor:
+    name: "SSH Monitoring Service"
+    description: "Monitors SSH services and system health"
+    type: "systemd"
+    exec_start: "/usr/local/bin/ssh-monitor start"
+    exec_stop: "/usr/local/bin/ssh-monitor stop"
+    restart: "on-failure"
+    restart_sec: 60
+
+# Health Check Settings
+health_check:
+  interval: 30
+  timeout: 5
+  retries: 3
+  checks:
+    - type: "port"
+      port: 22
+      protocol: "tcp"
+    - type: "process"
+      name: "sshd"
+    - type: "log"
+      path: "/var/log/sshd.log"
+      pattern: "error|failed"
+
+# Resource Limits
+limits:
+  cpu: 50
+  memory: 256
+  nofile: 1024
+  nproc: 64
+
+# Logging Settings
+logging:
+  directory: "/var/log/ssh-dashboard"
+  max_size: 10485760  # 10MB
+  max_files: 5
+  level: "info"
+
+# Notification Settings
+notifications:
+  startup: true
+  shutdown: true
+  failure: true
+  channels:
+    - type: "email"
+      recipients: ["admin@example.com"]
+    - type: "slack"
+      webhook: ""
+      channel: "#service-alerts"

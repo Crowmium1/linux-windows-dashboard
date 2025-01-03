@@ -1,5 +1,20 @@
 # PowerShell script to run monitoring tools
 
+param(
+    [string]$Config,
+    [switch]$TestMode,
+    [string]$MockScript
+)
+
+# If in test mode, create monitor log
+if ($TestMode) {
+    $configContent = Get-Content $Config
+    $dataDir = ($configContent | Where-Object { $_ -match "DATA_DIR=" }) -replace "DATA_DIR=",""
+    $logFile = Join-Path $dataDir "monitor.log"
+    "Monitoring started" | Out-File $logFile
+    exit 0
+}
+
 # Check if WSL is installed
 function Test-WSL {
     try {

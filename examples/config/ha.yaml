@@ -1,0 +1,144 @@
+# Example High Availability Configuration
+
+# Node Configuration
+node:
+  role: "primary"  # primary or secondary
+  hostname: "ha1.example.com"
+  id: "node1"
+  datacenter: "dc1"
+
+# Cluster Configuration
+cluster:
+  name: "ssh-ha-cluster"
+  nodes:
+    - hostname: "ha1.example.com"
+      role: "primary"
+      ip: "192.168.1.10"
+    - hostname: "ha2.example.com"
+      role: "secondary"
+      ip: "192.168.1.11"
+  
+  virtual_ip:
+    enabled: true
+    address: "192.168.1.100"
+    interface: "eth0"
+    mask: "24"
+
+# Synchronization
+sync:
+  interval: 300  # seconds
+  method: "rsync"
+  paths:
+    - "/etc/ssh"
+    - "/etc/ssh_dashboard"
+    - "${HA_STATE_DIR}"
+  exclude:
+    - "*.tmp"
+    - "*.bak"
+  rsync:
+    user: "rsync"
+    options:
+      - "--archive"
+      - "--delete"
+      - "--compress"
+
+# Failover
+failover:
+  auto: true
+  check_interval: 30
+  max_failures: 3
+  services:
+    - name: "sshd"
+      priority: 1
+    - name: "ssh-monitor"
+      priority: 2
+    - name: "ssh-dashboard"
+      priority: 3
+
+# Health Check
+health_check:
+  interval: 30
+  timeout: 5
+  checks:
+    - name: "ssh"
+      type: "tcp"
+      port: 22
+    - name: "dashboard"
+      type: "http"
+      url: "http://localhost:3000/health"
+    - name: "disk"
+      type: "disk"
+      path: "/"
+      threshold: 90
+
+# Network
+network:
+  keepalive:
+    enabled: true
+    interval: 2
+    timeout: 5
+    max_failures: 3
+  interfaces:
+    - name: "eth0"
+      ip: "192.168.1.10"
+      mask: "24"
+      gateway: "192.168.1.1"
+
+# Fencing
+fencing:
+  enabled: true
+  methods:
+    - type: "ipmi"
+      host: "192.168.1.100"
+      user: "admin"
+      password: "password"
+    - type: "ssh"
+      host: "192.168.1.101"
+      user: "root"
+      key: "/root/.ssh/fence_key"
+
+# Monitoring
+monitoring:
+  enabled: true
+  interval: 60
+  metrics:
+    - name: "node_status"
+      type: "gauge"
+    - name: "sync_status"
+      type: "gauge"
+    - name: "failover_count"
+      type: "counter"
+
+# Logging
+logging:
+  level: "info"
+  file: "${HA_LOG_DIR}/ha.log"
+  max_size: 10485760
+  max_files: 5
+  format: "json"
+  syslog:
+    enabled: true
+    facility: "local0"
+
+# Security
+security:
+  ssl:
+    enabled: true
+    cert: "/etc/ssl/certs/ha.crt"
+    key: "/etc/ssl/private/ha.key"
+  authentication:
+    type: "key"
+    key_file: "/etc/ssh_dashboard/ha_key"
+  encryption:
+    enabled: true
+    algorithm: "aes-256-gcm"
+    key_file: "/etc/ssh_dashboard/encryption_key"
+
+# Recovery
+recovery:
+  auto: true
+  max_attempts: 3
+  backoff:
+    initial: 30
+    max: 300
+    multiplier: 2
